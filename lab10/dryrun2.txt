@@ -1,0 +1,13 @@
+Reader 1 arrives
+➤ sem_wait(mutex) → locks mutex
+➤ readers_count = 1 → first reader → sem_wait(rw_mutex) → blocks writers
+➤ sem_post(mutex)
+
+Reader reads file
+➤ Goes line by line using fgets()
+➤ Prints each line to screen
+
+Reader finishes reading
+➤ sem_wait(mutex)
+➤ readers_count = 0 → last reader → sem_post(rw_mutex) → unlocks for writers
+➤ sem_post(mutex)

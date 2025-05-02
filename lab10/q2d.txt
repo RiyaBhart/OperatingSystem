@@ -1,0 +1,7 @@
+i. No reader waits unless a writer is active:
+✔ Yes — Readers only wait if a writer already has the rw_mutex.
+✔ Multiple readers can read together — no waiting on each other.
+
+ii. Writers get in as soon as ready:
+✔ Yes — Once a writer locks rw_mutex, no new reader can enter.
+✔ Ensures writer writes without interference.
