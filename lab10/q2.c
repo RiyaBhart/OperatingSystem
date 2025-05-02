@@ -3,7 +3,7 @@
 #include <time.h>
 #include <semaphore.h>
 #include <pthread.h>
-#include <unistd.h> // for usleep()
+#include <unistd.h> 
 
 #define NUM_READERS 5
 #define NUM_WRITERS 2
@@ -14,12 +14,12 @@ sem_t mutex, rw_mutex;
 int readers_count = 0;
 FILE *file;
 
-// Generate a random lowercase character
+
 char generateRandomChar() {
     return (char)('a' + rand() % 26);
 }
 
-// Reader function
+
 void *reader(void *arg) {
     long reader_id = (long)arg;
 
@@ -27,11 +27,9 @@ void *reader(void *arg) {
         sem_wait(&mutex);
         readers_count++;
         if (readers_count == 1) {
-            sem_wait(&rw_mutex); // First reader locks writers out
+            sem_wait(&rw_mutex); 
         }
         sem_post(&mutex);
-
-        // Reading from the file
         fseek(file, 0, SEEK_SET);
         char buffer[256];
         while (fgets(buffer, sizeof(buffer), file) != NULL) {
@@ -41,45 +39,43 @@ void *reader(void *arg) {
         sem_wait(&mutex);
         readers_count--;
         if (readers_count == 0) {
-            sem_post(&rw_mutex); // Last reader lets writers in
+            sem_post(&rw_mutex); 
         }
         sem_post(&mutex);
 
-        usleep(100000); // Sleep for 100 ms
+        usleep(100000); 
     }
 
     return NULL;
 }
 
-// Writer function
+
 void *writer(void *arg) {
     long writer_id = (long)arg;
 
     while (1) {
-        sem_wait(&rw_mutex); // Lock out readers and other writers
-
-        // Seed random generator and create a string
+        sem_wait(&rw_mutex); 
         char randomString[STRING_LENGTH + 1];
         for (int i = 0; i < STRING_LENGTH; i++) {
             randomString[i] = generateRandomChar();
         }
         randomString[STRING_LENGTH] = '\0';
 
-        // Write to file
+        
         fseek(file, 0, SEEK_END);
         fprintf(file, "%s\n", randomString);
         fprintf(stdout, "Writer %ld: %s\n", writer_id, randomString);
-        fflush(file); // Ensure it's written to disk
+        fflush(file); 
 
         sem_post(&rw_mutex);
 
-        usleep(150000); // Sleep for 150 ms
+        usleep(150000); 
     }
 
     return NULL;
 }
 
-// Main function
+
 int main() {
     file = fopen("shared_file.txt", "a+");
     if (file == NULL) {
@@ -110,4 +106,3 @@ int main() {
 
     return 0;
 }
-
